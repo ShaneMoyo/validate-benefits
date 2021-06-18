@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'; 
+import readXlsxFile from 'read-excel-file'
 
 function App() {
+  const [benefitsData, setBenefitsData] = useState(); 
+  const [workdayData, setWorkdayData] = useState(); 
+
+  const handleBenefitFileUpload = async ({ target: { files }}) => { 
+
+    await readXlsxFile(files[0]).then((rows) => {
+     
+     setBenefitsData(rows); 
+    })
+  }
+
+  const handleWorkdayFileUpload = async ({ target: { files }}) => { 
+
+     await readXlsxFile(files[0]).then((rows) => {
+      
+      setWorkdayData(rows); 
+     })
+   }
+
+   console.log('state:')
+   console.log('benfits:', benefitsData);
+   console.log('workday:', workdayData); 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <label>Upload benefits file: </label>
+      <br/>
+      <input type="file" onChange={handleBenefitFileUpload} /> 
+      <br/>
+      <br/>
+      <br/>
+      <label>Upload workday file: </label>
+      <br/>
+      <input type="file" onChange={handleWorkdayFileUpload} /> 
     </div>
   );
 }
