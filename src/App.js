@@ -34,31 +34,30 @@ function App() {
     const workDayEmployeeMap = {}; 
 
     const badRows = [];
-
+    
     workdayData.forEach(employee => { 
-      const id = `${employee[2]?.toUpperCase()}, ${employee[3]?.toUpperCase()?.toUpperCase()}`;
+      const id = `${employee[2]?.toUpperCase()}, ${employee[3]?.toUpperCase()}`;
       const isdDnetal = employee[10] === 'USA Dental - USA Guardian PPO Low' || employee[10] === 'USA Dental - USA Guardian PPO High';
       const benefitName = isdDnetal ? 'USA Dental - USA Guardian PPO Dental' : employee[10];
       if(workDayEmployeeMap[id]) { 
-        workDayEmployeeMap[id].push(benefitName)
+        benefitName && workDayEmployeeMap[id].push(benefitName)
       } else { 
-        workDayEmployeeMap[id] = [benefitName];
+         workDayEmployeeMap[id] = benefitName ? [benefitName] : undefined;
       }
     }); 
+    console.log('workdayData count : ', Object.keys(workdayData).length);
+    console.log('workDayEmployeeMap count : ', Object.keys(workDayEmployeeMap).length);
 
-    console.log('workDayEmployeeMap:', workDayEmployeeMap); 
+    
     let m = 0; 
     const benfitHeaders = benefitsData.shift();
-    console.log('benfitHeaders: ', benfitHeaders)
-    benefitsData.forEach(employee => { 
-      
+    
+    benefitsData.forEach(employee => {  
       let id = employee[0];    
-      //console.log('id: ', id)
       if(!id) { 
         m++
       }
       if(id && id.split(' ').length === 3) {
-        console.log('converting middle name: ', id); 
         const pieces = id.split(' '); 
         let newId = pieces[0];
         for(let i = 1; i <pieces.length; i++) {
@@ -66,45 +65,47 @@ function App() {
           if(piece.length > 1) newId = `${newId} ${piece}`
         }
         id = newId;
-        console.log('newid: ', id)
       }
 
       
       for(let i = 5; i < employee.length; i++) {
         const benefit = employee[i] ? benfitHeaders[i] : null;
-        //console.log("benefit: ", benefit)
         const workdayBenifitsForEmployee = workDayEmployeeMap[id]; 
         
         
         if(benefit && map[benefit] && !workdayBenifitsForEmployee?.includes(map[benefit])) {
-          // console.log(`workdayBenifitsForEmployee for ${id}`, workdayBenifitsForEmployee); 
-          // console.log('employee[i]: ', employee[i])
-          // console.log('benfitHeaders[i: ', benfitHeaders[i])
-          // console.log('benefit: ', benefit)
-          // console.log('map[benefit]: ', map[benefit])
-          const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `${employee[0]} has ${benefit} in guardian but does not have ${map[benefit]} in workday.` : `${id} has ${benefit} in guardian but has no benefits in workday.`
+          const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${benefit} in guardian but does not have ${map[benefit]} in workday.` : `Has ${benefit} in guardian but has no benefits in workday.`
           if(badRows[id]){
-            badRows[id].push({
+            badRows[id].errors.push(
               reason, 
-              workdayBenifitsForEmployee
-            })
+            )
           } else { 
-            badRows[id] = [{
+            badRows[id] = {
+              workdayBenifitsForEmployee,
+              errors: [
               reason,
-              workdayBenifitsForEmployee
-            }]
+            ]
+          }
           }
         }
       }
       
     }); 
-    console.log('bad count : ', Object.keys(badRows).length); 
-    console.log('badRows: ', badRows); 
+    const noDataInWorkDay = {}; 
+    const missingBenefits = {}; 
+    Object.entries(badRows).forEach(([employeeName, data]) => {
+      if(data.workdayBenifitsForEmployee) {
+        missingBenefits[employeeName] = data
+      } else {
+        noDataInWorkDay[employeeName] = data
+      }
+    })
+    console.log('bad count : ', Object.keys(badRows).length);
+    console.log('noDataInWorkDay count : ', Object.keys(noDataInWorkDay).length); 
+    console.log('noDataInWorkDay: ', noDataInWorkDay); 
+    console.log('missingBenefits count : ', Object.keys(missingBenefits).length); 
+    console.log('missingBenefits: ', missingBenefits); 
   }
-
-   console.log('state:')
-   console.log('benfits:', benefitsData);
-   console.log('workday:', workdayData); 
   return (
     <div className="App">
       <label>Upload benefits file: </label>
