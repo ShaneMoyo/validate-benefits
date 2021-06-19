@@ -17,32 +17,42 @@ function App() {
       setWorkdayData(rows); 
      })
    }
+   const map = { 
+    "AD&D: Basic Term Life Volume": "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)", 
+    "Group Term Life: Basic Term Life Premium": "USA Group Term Life - USA Guardian  (Employee)", 
+    "Accident Premium": "USA Accident - USA Guardian", 
+    "Dental Fee Premium": "USA Dental - USA Guardian PPO Dental",
+    "LTD Premium": "USA Long Term Disability (LTD) - USA Guardian LTD (Employee)",
+    "STD Premium": "USA Short Term Disability (STD) - USA Guardian  (Employee)",
+    "Vol Hospital Indemnity Premium": "USA Hospital Coverage - USA Guardian",
+    "Voluntary Critical Illness Premium": "USA Critical Illness Coverage - USA Guardian  (Employee)", 
+    "Supplementary Voluntary Term Life Premium":"USA Supplemental Life - USA Guardian  (Employee)"
+  };
+
+  const bmap = { 
+   "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)": "AD&D: Basic Term Life Volume", 
+   "USA Group Term Life - USA Guardian  (Employee)": "Group Term Life: Basic Term Life Premium", 
+   "USA Accident - USA Guardian": "Accident Premium", 
+   "USA Dental - USA Guardian PPO Dental": "Dental Fee Premium",
+   "USA Long Term Disability (LTD) - USA Guardian LTD (Employee)" : "LTD Premium",
+   "USA Short Term Disability (STD) - USA Guardian  (Employee)" : "STD Premium",
+   "USA Hospital Coverage - USA Guardian" : "Vol Hospital Indemnity Premium",
+   "USA Critical Illness Coverage - USA Guardian  (Employee)": "Voluntary Critical Illness Premium", 
+  "USA Supplemental Life - USA Guardian  (Employee)" : "Supplementary Voluntary Term Life Premium",
+  };
 
   const handleValidate = () => { 
-    const map = { 
-      "AD&D: Basic Term Life Volume": "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)", 
-      "Group Term Life: Basic Term Life Premium": "USA Group Term Life - USA Guardian  (Employee)", 
-      "Accident Premium": "USA Accident - USA Guardian", 
-      "Dental Fee Premium": "USA Dental - USA Guardian PPO Dental",
-      "LTD Premium": "USA Long Term Disability (LTD) - USA Guardian LTD (Employee)",
-      "STD Premium": "USA Short Term Disability (STD) - USA Guardian  (Employee)",
-      "Vol Hospital Indemnity Premium": "USA Hospital Coverage - USA Guardian",
-      "Voluntary Critical Illness Premium": "USA Critical Illness Coverage - USA Guardian  (Employee)", 
-      "Supplementary Voluntary Term Life Premium":"USA Supplemental Life - USA Guardian  (Employee)"
-    };
-
     const workDayEmployeeMap = {}; 
-
+    const benefitsEmployeeMap = {}; 
     const badRows = [];
-    
     workdayData.forEach(employee => { 
       const id = `${employee[2]?.toUpperCase()}, ${employee[3]?.toUpperCase()}`;
       const isdDnetal = employee[10] === 'USA Dental - USA Guardian PPO Low' || employee[10] === 'USA Dental - USA Guardian PPO High';
       const benefitName = isdDnetal ? 'USA Dental - USA Guardian PPO Dental' : employee[10];
       if(workDayEmployeeMap[id]) { 
-        benefitName && workDayEmployeeMap[id].push(benefitName)
+        bmap[benefitName] && workDayEmployeeMap[id].push(benefitName)
       } else { 
-         workDayEmployeeMap[id] = benefitName ? [benefitName] : undefined;
+         workDayEmployeeMap[id] = bmap[benefitName] ? [benefitName] : undefined;
       }
     }); 
     console.log('workdayData count : ', Object.keys(workdayData).length);
@@ -57,6 +67,7 @@ function App() {
       if(!id) { 
         m++
       }
+
       if(id && id.split(' ').length === 3) {
         const pieces = id.split(' '); 
         let newId = pieces[0];
@@ -67,12 +78,17 @@ function App() {
         id = newId;
       }
 
+      if(id) {
+        if(!benefitsEmployeeMap[id]) {
+          benefitsEmployeeMap[id] = [];
+        } 
+      }
       
       for(let i = 5; i < employee.length; i++) {
         const benefit = employee[i] ? benfitHeaders[i] : null;
-        const workdayBenifitsForEmployee = workDayEmployeeMap[id]; 
-        
-        
+        const workdayBenifitsForEmployee = workDayEmployeeMap[id];
+        const guardianBenifitsForEmployee = benefitsEmployeeMap[id]; 
+        map[benefit] && benefitsEmployeeMap[id]?.push(benefit); 
         if(benefit && map[benefit] && !workdayBenifitsForEmployee?.includes(map[benefit])) {
           const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${benefit} in guardian but does not have ${map[benefit]} in workday.` : `Has ${benefit} in guardian but has no benefits in workday.`
           if(badRows[id]){
@@ -82,6 +98,7 @@ function App() {
           } else { 
             badRows[id] = {
               workdayBenifitsForEmployee,
+              guardianBenifitsForEmployee,
               errors: [
               reason,
             ]
@@ -89,7 +106,6 @@ function App() {
           }
         }
       }
-      
     }); 
     const noDataInWorkDay = {}; 
     const missingBenefits = {}; 
@@ -100,6 +116,16 @@ function App() {
         noDataInWorkDay[employeeName] = data
       }
     })
+    
+    
+    Object.entries(workDayEmployeeMap).forEach(([employeeName, data]) => {
+      data?.forEach(plan => { 
+        if(!benefitsEmployeeMap[employeeName]?.includes(plan)) { 
+          const err = `Has ${plan} on workday but does not have ${bmap[plan]}`;
+          badRows[employeeName]?.errors?.push(err);
+        }
+      })
+    });
     console.log('bad count : ', Object.keys(badRows).length);
     console.log('noDataInWorkDay count : ', Object.keys(noDataInWorkDay).length); 
     console.log('noDataInWorkDay: ', noDataInWorkDay); 
