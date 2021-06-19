@@ -17,7 +17,7 @@ function App() {
       setWorkdayData(rows); 
      })
    }
-   const map = { 
+   const guardianToWorkdayMap = { 
     "AD&D: Basic Term Life Volume": "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)", 
     "Group Term Life: Basic Term Life Premium": "USA Group Term Life - USA Guardian  (Employee)", 
     "Accident Premium": "USA Accident - USA Guardian", 
@@ -29,7 +29,7 @@ function App() {
     "Supplementary Voluntary Term Life Premium":"USA Supplemental Life - USA Guardian  (Employee)"
   };
 
-  const bmap = { 
+  const workdayToGuardianMap = { 
    "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)": "AD&D: Basic Term Life Volume", 
    "USA Group Term Life - USA Guardian  (Employee)": "Group Term Life: Basic Term Life Premium", 
    "USA Accident - USA Guardian": "Accident Premium", 
@@ -50,9 +50,9 @@ function App() {
       const isdDnetal = employee[10] === 'USA Dental - USA Guardian PPO Low' || employee[10] === 'USA Dental - USA Guardian PPO High';
       const benefitName = isdDnetal ? 'USA Dental - USA Guardian PPO Dental' : employee[10];
       if(workDayEmployeeMap[id]) { 
-        bmap[benefitName] && workDayEmployeeMap[id].push(benefitName)
+        workdayToGuardianMap[benefitName] && workDayEmployeeMap[id].push(benefitName)
       } else { 
-         workDayEmployeeMap[id] = bmap[benefitName] ? [benefitName] : undefined;
+         workDayEmployeeMap[id] = workdayToGuardianMap[benefitName] ? [benefitName] : undefined;
       }
     }); 
     console.log('workdayData count : ', Object.keys(workdayData).length);
@@ -88,9 +88,9 @@ function App() {
         const benefit = employee[i] ? benfitHeaders[i] : null;
         const workdayBenifitsForEmployee = workDayEmployeeMap[id];
         const guardianBenifitsForEmployee = benefitsEmployeeMap[id]; 
-        map[benefit] && benefitsEmployeeMap[id]?.push(benefit); 
-        if(benefit && map[benefit] && !workdayBenifitsForEmployee?.includes(map[benefit])) {
-          const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${benefit} in guardian but does not have ${map[benefit]} in workday.` : `Has ${benefit} in guardian but has no benefits in workday.`
+        guardianToWorkdayMap[benefit] && benefitsEmployeeMap[id]?.push(benefit); 
+        if(benefit && guardianToWorkdayMap[benefit] && !workdayBenifitsForEmployee?.includes(guardianToWorkdayMap[benefit])) {
+          const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${benefit} in guardian but does not have ${guardianToWorkdayMap[benefit]} in workday.` : `Has ${benefit} in guardian but has no benefits in workday.`
           if(badRows[id]){
             badRows[id].errors.push(
               reason, 
@@ -121,7 +121,7 @@ function App() {
     Object.entries(workDayEmployeeMap).forEach(([employeeName, data]) => {
       data?.forEach(plan => { 
         if(!benefitsEmployeeMap[employeeName]?.includes(plan)) { 
-          const err = `Has ${plan} on workday but does not have ${bmap[plan]}`;
+          const err = `Has ${plan} on workday but does not have ${workdayToGuardianMap[plan]}`;
           badRows[employeeName]?.errors?.push(err);
         }
       })
