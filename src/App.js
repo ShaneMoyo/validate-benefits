@@ -181,6 +181,7 @@ function App() {
     setEmployeesWithNoWorkday(noDataInWorkDay); 
     setEmployeesWithMissingBenefit(missingBenefitMatch)
   }
+  const dataForView = view === 'missing-benefit' ? employeesWithMissingBenefit : employeesWithNoWorkday; 
   return (
     <div className="App">
       <div>
@@ -189,15 +190,21 @@ function App() {
       <Input  color='primary' variant="outlined" type="file" onChange={handleGuardianFileUpload} /> 
       <label>Upload workday file: </label>
       <Input  color='primary'variant="outlined" type="file" onChange={handleWorkdayFileUpload} /> 
+      <br/>
+      <br/>
+        <br/>
       <Button variant="outlined" color='primary' onClick={handleValidate}>Validate benefits</Button>
       </div>
+      <br/>
+        <br/>
       <div>
-        {employeesWithErrors && <div><Button variant="outlined" color='primary' onClick={handleValidate}>{`No Workday benefits: ${Object.keys(employeesWithNoWorkday).length}`}</Button><Button variant="outlined" color='primary' onClick={handleValidate}>{`Invalid benefit status: ${Object.keys(employeesWithMissingBenefit).length}`}</Button></div> }
+        {employeesWithErrors && <div><Button variant="outlined" color='primary' onClick={() => setView('no-workday')}>{`No Workday benefits: ${Object.keys(employeesWithNoWorkday).length}`}</Button><Button variant="outlined" color='primary' onClick={() => setView('missing-benefit')}>{`Invalid benefit status: ${Object.keys(employeesWithMissingBenefit).length}`}</Button></div> }
+       
         <MaterialTable
           columns={[
             {  field: "name" }
           ]}
-          data={Object.entries(employeesWithErrors || {}).map(([employeeName, data]) => ({ name: employeeName, ...data }))}
+          data={Object.entries(dataForView || {}).map(([employeeName, data]) => ({ name: employeeName, ...data }))}
           title="Employees with invalid benefits: "
           detailPanel={rowData => {
             console.log('what!: ', rowData)
