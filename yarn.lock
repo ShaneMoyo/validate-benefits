@@ -7457,6 +7457,11 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+material-icons@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/material-icons/-/material-icons-0.7.2.tgz#cfcb9b8247c624df4fca59661e914b81ad4deceb"
+  integrity sha512-IrMBh/aFr2YRDHmM/gUoGB9Kq0DzmEkn/qcKcc/B4lG1FGQzG1Zs+kQyR5b5EXjAVEnTsi0fs+s7iDsiX3Indg==
+
 material-table@^1.69.3:
   version "1.69.3"
   resolved "https://registry.yarnpkg.com/material-table/-/material-table-1.69.3.tgz#3f282cffecf5461985965cd4a516bebb8069bf2d"

@@ -197,7 +197,7 @@ function App() {
             { title: "employee", field: "name" }
           ]}
           data={Object.entries(employeesWithErrors || {}).map(([employeeName, data]) => ({ name: employeeName, ...data }))}
-          rowsPerPage={25}
+          
           detailPanel={rowData => {
             console.log('what!: ', rowData)
             return (
