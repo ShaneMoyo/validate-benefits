@@ -110,32 +110,66 @@ function App() {
         }
       }
     }); 
+    
+    
+    
+    
+    Object.entries(workDayEmployeeMap).forEach(([employeeName, plans]) => {
+      
+      plans?.forEach(plan => { 
+        let err =""; 
+        if(!guardianEmployeeMap[employeeName]) {
+          err = `Has no benfits in guardian`;
+          if(employeesWithInvalidBenefits[employeeName]) {
+            employeesWithInvalidBenefits[employeeName].errors.push(err);
+          } else {
+            console.log('adding a new one')
+            employeesWithInvalidBenefits[employeeName] = {
+              workdayBenifitsForEmployee: plans,
+              guardianBenifitsForEmployee: guardianEmployeeMap[employeeName],
+              errors: [
+                err,
+              ]
+            } 
+          } 
+          return;
+        }
 
-    const noDataInWorkDay = {}; 
-    const missingBenefitsInWorkday = {}; 
-    Object.entries(employeesWithInvalidBenefits).forEach(([employeeName, data]) => {
-      if(data.workdayBenifitsForEmployee) {
-        missingBenefitsInWorkday[employeeName] = data
-      } else {
-        noDataInWorkDay[employeeName] = data
-      }
-    })
-    
-    
-    Object.entries(workDayEmployeeMap).forEach(([employeeName, data]) => {
-      data?.forEach(plan => { 
-        if(!guardianEmployeeMap[employeeName]?.includes(plan)) { 
-          const err = `Has ${plan} on workday but does not have ${workdayToGuardianMap[plan]}`;
-          employeesWithInvalidBenefits[employeeName]?.errors?.push(err);
+        if(!guardianEmployeeMap[employeeName].includes(workdayToGuardianMap[plan])) { 
+          err = `Has ${plan} on workday but does not have ${workdayToGuardianMap[plan]}`;
+          if(employeesWithInvalidBenefits[employeeName]) {
+            employeesWithInvalidBenefits[employeeName].errors.push(err);
+          } else {
+            console.log('adding a new one')
+            employeesWithInvalidBenefits[employeeName] = {
+              workdayBenifitsForEmployee: plans,
+              guardianBenifitsForEmployee: guardianEmployeeMap[employeeName],
+              errors: [
+                err,
+              ]
+            } 
+          } 
+          return;
         }
       })
     });
+
+    const noDataInWorkDay = {}; 
+    const missingBenefitMatch = {}; 
+    Object.entries(employeesWithInvalidBenefits).forEach(([employeeName, data]) => {
+      if(!Array.isArray(data.workdayBenifitsForEmployee) || !Array.isArray(data.guardianBenifitsForEmployee)) {
+        noDataInWorkDay[employeeName] = data
+      } else {
+        missingBenefitMatch[employeeName] = data
+      }
+    })
+
     console.log('missing : ', m);
     console.log('bad count : ', Object.keys(employeesWithInvalidBenefits).length);
     console.log('noDataInWorkDay count : ', Object.keys(noDataInWorkDay).length); 
     console.log('noDataInWorkDay: ', noDataInWorkDay); 
-    console.log('missingBenefitsInWorkday count : ', Object.keys(missingBenefitsInWorkday).length); 
-    console.log('missingBenefitsInWorkday: ', missingBenefitsInWorkday); 
+    console.log('missingBenefitMatch count : ', Object.keys(missingBenefitMatch).length); 
+    console.log('missingBenefitMatch: ', missingBenefitMatch); 
   }
   return (
     <div className="App">
