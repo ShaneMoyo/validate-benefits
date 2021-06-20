@@ -32,6 +32,9 @@ function App() {
   const [guardianData, setGuardianData] = useState(); 
   const [workdayData, setWorkdayData] = useState(); 
   const [employeesWithErrors, setEmployeesWithErrors] = useState(); 
+  const [employeesWithNoWorkday, setEmployeesWithNoWorkday] = useState(); 
+  const [employeesWithMissingBenefit, setEmployeesWithMissingBenefit] = useState();
+  const [view, setView] = useState('missing-benefit');
 
   const handleGuardianFileUpload = async ({ target: { files }}) => await readXlsxFile(files[0]).then((rows) => setGuardianData(rows));
   const handleWorkdayFileUpload = async ({ target: { files }}) => await readXlsxFile(files[0]).then((rows) => setWorkdayData(rows));
@@ -175,17 +178,21 @@ function App() {
     console.log('missingBenefitMatch count : ', Object.keys(missingBenefitMatch).length); 
     console.log('missingBenefitMatch: ', missingBenefitMatch); 
     setEmployeesWithErrors(employeesWithInvalidBenefits); 
+    setEmployeesWithNoWorkday(noDataInWorkDay); 
+    setEmployeesWithMissingBenefit(missingBenefitMatch)
   }
   return (
     <div className="App">
       <div>
       <label>Upload benefits file: </label>
+
       <Input  color='primary' variant="outlined" type="file" onChange={handleGuardianFileUpload} /> 
       <label>Upload workday file: </label>
       <Input  color='primary'variant="outlined" type="file" onChange={handleWorkdayFileUpload} /> 
       <Button variant="outlined" color='primary' onClick={handleValidate}>Validate benefits</Button>
       </div>
       <div>
+        {employeesWithErrors && <div><Button variant="outlined" color='primary' onClick={handleValidate}>{`No Workday benefits: ${Object.keys(employeesWithNoWorkday).length}`}</Button><Button variant="outlined" color='primary' onClick={handleValidate}>{`Invalid benefit status: ${Object.keys(employeesWithMissingBenefit).length}`}</Button></div> }
         <MaterialTable
           columns={[
             {  field: "name" }
