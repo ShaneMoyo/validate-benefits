@@ -36,24 +36,31 @@ function App() {
     const workDayEmployeeMap = {}; 
     const guardianEmployeeMap = {}; 
     const badRows = [];
-
+    let x = 0;
+    let y = 0;
+    let w1 = []; 
     workdayData.forEach(employee => { 
       let workdayBenefit = employee[10];
       const employeeName = `${employee[2]?.toUpperCase()}, ${employee[3]?.toUpperCase()}`;
       const isDental = workdayBenefit === 'USA Dental - USA Guardian PPO Low' || workdayBenefit === 'USA Dental - USA Guardian PPO High';
+      
       if (isDental) workdayBenefit = 'USA Dental - USA Guardian PPO Dental';
-      if(workDayEmployeeMap[employeeName]) { 
+      if(Array.isArray(workDayEmployeeMap[employeeName])) { 
+        x++
         workdayToGuardianMap[workdayBenefit] && workDayEmployeeMap[employeeName].push(workdayBenefit)
       } else { 
-         workDayEmployeeMap[employeeName] = workdayToGuardianMap[workdayBenefit] ? [workdayBenefit] : undefined;
+        y++
+        w1.push(employeeName)
+        console.log('workDayEmployeeMap[employeeName]', workDayEmployeeMap[employeeName])
+        workDayEmployeeMap[employeeName] = workdayToGuardianMap[workdayBenefit] ? [workdayBenefit] : [];
       }
     }); 
+    
     console.log('workdayData count : ', Object.keys(workdayData).length);
     console.log('workDayEmployeeMap count : ', Object.keys(workDayEmployeeMap).length);
-
     
     let m = 0; 
-    const benfitHeaders = guardianData.shift();
+    const benfitHeaders = guardianData[0];
     
     guardianData.forEach(employee => {  
       let id = employee[0];    
