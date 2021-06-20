@@ -45,6 +45,7 @@ function App() {
       const isDental = workdayBenefit === 'USA Dental - USA Guardian PPO Low' || workdayBenefit === 'USA Dental - USA Guardian PPO High';
       
       if (isDental) workdayBenefit = 'USA Dental - USA Guardian PPO Dental';
+      
       if(Array.isArray(workDayEmployeeMap[employeeName])) { 
         x++
         workdayToGuardianMap[workdayBenefit] && workDayEmployeeMap[employeeName].push(workdayBenefit)
@@ -63,40 +64,41 @@ function App() {
     const benfitHeaders = guardianData[0];
     
     guardianData.forEach(employee => {  
-      let id = employee[0];    
-      if(!id) { 
+      let employeeName = employee[0];    
+      if(!employeeName) { 
         m++
+        return ; 
       }
 
-      if(id && id.split(' ').length === 3) {
-        const pieces = id.split(' '); 
-        let newId = pieces[0];
+      if(employeeName && employeeName.split(' ').length === 3) {
+        const pieces = employeeName.split(' '); 
+        let newEmployeeName = pieces[0];
         for(let i = 1; i <pieces.length; i++) {
           const piece = pieces[i];
-          if(piece.length > 1) newId = `${newId} ${piece}`
+          if(piece.length > 1) newEmployeeName = `${newEmployeeName} ${piece}`
         }
-        id = newId;
+        employeeName = newEmployeeName;
       }
 
-      if(id) {
-        if(!guardianEmployeeMap[id]) {
-          guardianEmployeeMap[id] = [];
-        } 
-      }
+      
+      if(!Array.isArray(guardianEmployeeMap[employeeName])) {
+        guardianEmployeeMap[employeeName] = [];
+      } 
+      
       
       for(let i = 5; i < employee.length; i++) {
         const benefit = employee[i] ? benfitHeaders[i] : null;
-        const workdayBenifitsForEmployee = workDayEmployeeMap[id];
-        const guardianBenifitsForEmployee = guardianEmployeeMap[id]; 
-        guardianToWorkdayMap[benefit] && guardianEmployeeMap[id]?.push(benefit); 
+        const workdayBenifitsForEmployee = workDayEmployeeMap[employeeName];
+        const guardianBenifitsForEmployee = guardianEmployeeMap[employeeName]; 
+        guardianToWorkdayMap[benefit] && guardianEmployeeMap[employeeName].push(benefit); 
         if(benefit && guardianToWorkdayMap[benefit] && !workdayBenifitsForEmployee?.includes(guardianToWorkdayMap[benefit])) {
           const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${benefit} in guardian but does not have ${guardianToWorkdayMap[benefit]} in workday.` : `Has ${benefit} in guardian but has no benefits in workday.`
-          if(badRows[id]){
-            badRows[id].errors.push(
+          if(badRows[employeeName]){
+            badRows[employeeName].errors.push(
               reason, 
             )
           } else { 
-            badRows[id] = {
+            badRows[employeeName] = {
               workdayBenifitsForEmployee,
               guardianBenifitsForEmployee,
               errors: [
@@ -126,6 +128,7 @@ function App() {
         }
       })
     });
+    console.log('missing : ', m);
     console.log('bad count : ', Object.keys(badRows).length);
     console.log('noDataInWorkDay count : ', Object.keys(noDataInWorkDay).length); 
     console.log('noDataInWorkDay: ', noDataInWorkDay); 
