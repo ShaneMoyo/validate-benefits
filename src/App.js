@@ -35,7 +35,7 @@ function App() {
   const handleValidate = () => { 
     const workDayEmployeeMap = {}; 
     const guardianEmployeeMap = {}; 
-    const badRows = [];
+    const employeesWithInvalidBenefits = [];
     let x = 0;
     let y = 0;
     let w1 = []; 
@@ -59,7 +59,7 @@ function App() {
     
     console.log('workdayData count : ', Object.keys(workdayData).length);
     console.log('workDayEmployeeMap count : ', Object.keys(workDayEmployeeMap).length);
-    
+    console.log('workDayEmployeeMap : ', workDayEmployeeMap);
     let m = 0; 
     const benfitHeaders = guardianData[0];
     
@@ -70,7 +70,7 @@ function App() {
         return ; 
       }
 
-      if(employeeName && employeeName.split(' ').length === 3) {
+      if(employeeName.split(' ').length === 3) {
         const pieces = employeeName.split(' '); 
         let newEmployeeName = pieces[0];
         for(let i = 1; i <pieces.length; i++) {
@@ -87,18 +87,19 @@ function App() {
       
       
       for(let i = 5; i < employee.length; i++) {
-        const benefit = employee[i] ? benfitHeaders[i] : null;
+        const guardianBenefit = employee[i] ? benfitHeaders[i] : null;
         const workdayBenifitsForEmployee = workDayEmployeeMap[employeeName];
         const guardianBenifitsForEmployee = guardianEmployeeMap[employeeName]; 
-        guardianToWorkdayMap[benefit] && guardianEmployeeMap[employeeName].push(benefit); 
-        if(benefit && guardianToWorkdayMap[benefit] && !workdayBenifitsForEmployee?.includes(guardianToWorkdayMap[benefit])) {
-          const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${benefit} in guardian but does not have ${guardianToWorkdayMap[benefit]} in workday.` : `Has ${benefit} in guardian but has no benefits in workday.`
-          if(badRows[employeeName]){
-            badRows[employeeName].errors.push(
+        guardianToWorkdayMap[guardianBenefit] && guardianEmployeeMap[employeeName].push(guardianBenefit); 
+        if(guardianToWorkdayMap[guardianBenefit] && !workdayBenifitsForEmployee?.includes(guardianToWorkdayMap[guardianBenefit])) {
+          const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${guardianBenefit} in guardian but does not have ${guardianToWorkdayMap[guardianBenefit]} in workday.` : `Has ${guardianBenefit} in guardian but has no benefits in workday.`
+          if(employeesWithInvalidBenefits[employeeName]){
+            employeesWithInvalidBenefits[employeeName].guardianBenifitsForEmployee = guardianBenifitsForEmployee;
+            employeesWithInvalidBenefits[employeeName].errors.push(
               reason, 
             )
           } else { 
-            badRows[employeeName] = {
+            employeesWithInvalidBenefits[employeeName] = {
               workdayBenifitsForEmployee,
               guardianBenifitsForEmployee,
               errors: [
@@ -109,11 +110,12 @@ function App() {
         }
       }
     }); 
+
     const noDataInWorkDay = {}; 
-    const missingBenefits = {}; 
-    Object.entries(badRows).forEach(([employeeName, data]) => {
+    const missingBenefitsInWorkday = {}; 
+    Object.entries(employeesWithInvalidBenefits).forEach(([employeeName, data]) => {
       if(data.workdayBenifitsForEmployee) {
-        missingBenefits[employeeName] = data
+        missingBenefitsInWorkday[employeeName] = data
       } else {
         noDataInWorkDay[employeeName] = data
       }
@@ -124,16 +126,16 @@ function App() {
       data?.forEach(plan => { 
         if(!guardianEmployeeMap[employeeName]?.includes(plan)) { 
           const err = `Has ${plan} on workday but does not have ${workdayToGuardianMap[plan]}`;
-          badRows[employeeName]?.errors?.push(err);
+          employeesWithInvalidBenefits[employeeName]?.errors?.push(err);
         }
       })
     });
     console.log('missing : ', m);
-    console.log('bad count : ', Object.keys(badRows).length);
+    console.log('bad count : ', Object.keys(employeesWithInvalidBenefits).length);
     console.log('noDataInWorkDay count : ', Object.keys(noDataInWorkDay).length); 
     console.log('noDataInWorkDay: ', noDataInWorkDay); 
-    console.log('missingBenefits count : ', Object.keys(missingBenefits).length); 
-    console.log('missingBenefits: ', missingBenefits); 
+    console.log('missingBenefitsInWorkday count : ', Object.keys(missingBenefitsInWorkday).length); 
+    console.log('missingBenefitsInWorkday: ', missingBenefitsInWorkday); 
   }
   return (
     <div className="App">
