@@ -1,5 +1,6 @@
 import React, { useState } from 'react'; 
-import readXlsxFile from 'read-excel-file'
+import readXlsxFile from 'read-excel-file'; 
+import MaterialTable from "material-table";
 
 const guardianToWorkdayMap = { 
   "AD&D: Basic Term Life Volume": "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)", 
@@ -28,6 +29,7 @@ const workdayToGuardianMap = {
 function App() {
   const [guardianData, setGuardianData] = useState(); 
   const [workdayData, setWorkdayData] = useState(); 
+  const [employeesWithErrors, setEmployeesWithErrors] = useState(); 
 
   const handleGuardianFileUpload = async ({ target: { files }}) => await readXlsxFile(files[0]).then((rows) => setGuardianData(rows));
   const handleWorkdayFileUpload = async ({ target: { files }}) => await readXlsxFile(files[0]).then((rows) => setWorkdayData(rows));
@@ -170,9 +172,11 @@ function App() {
     console.log('noDataInWorkDay: ', noDataInWorkDay); 
     console.log('missingBenefitMatch count : ', Object.keys(missingBenefitMatch).length); 
     console.log('missingBenefitMatch: ', missingBenefitMatch); 
+    setEmployeesWithErrors(employeesWithInvalidBenefits); 
   }
   return (
     <div className="App">
+      <div>
       <label>Upload benefits file: </label>
       <br/>
       <input type="file" onChange={handleGuardianFileUpload} /> 
@@ -186,6 +190,50 @@ function App() {
       <br/>
       <br/>
       <button onClick={handleValidate}>Validate benefits</button>
+      </div>
+      <div>
+        <MaterialTable
+          columns={[
+            { title: "employee", field: "name" }
+          ]}
+          data={Object.entries(employeesWithErrors || {}).map(([employeeName, data]) => ({ name: employeeName, ...data }))}
+          rowsPerPage={25}
+          detailPanel={rowData => {
+            console.log('what!: ', rowData)
+            return (
+              <div>
+                <ul>
+                  <li>
+                    <div>
+                      <p>Errors: </p>
+                      <ul>
+                        {rowData.errors.map(error => <li>{error}</li>)}
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <div>
+                      <p>Guardian benfits: </p>
+                      <ul>
+                        {rowData.guardianBenifitsForEmployee?.map(benefit => <li>{benefit}</li>)}
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <div>
+                      <p>Workday benfits: </p>
+                      <ul>
+                        {rowData.workdayBenifitsForEmployee?.map(benefit => <li>{benefit}</li>)}
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            )
+          }}
+        />
+      </div>
+      
     </div>
   );
 }
