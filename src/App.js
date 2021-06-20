@@ -1,6 +1,8 @@
 import React, { useState } from 'react'; 
 import readXlsxFile from 'read-excel-file'; 
 import MaterialTable from "material-table";
+import Input from '@material-ui/core/Input';
+import Button from '@material-ui/core/Button';
 
 const guardianToWorkdayMap = { 
   "AD&D: Basic Term Life Volume": "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)", 
@@ -178,18 +180,10 @@ function App() {
     <div className="App">
       <div>
       <label>Upload benefits file: </label>
-      <br/>
-      <input type="file" onChange={handleGuardianFileUpload} /> 
-      <br/>
-      <br/>
-      <br/>
+      <Input  color='primary' variant="outlined" type="file" onChange={handleGuardianFileUpload} /> 
       <label>Upload workday file: </label>
-      <br/>
-      <input type="file" onChange={handleWorkdayFileUpload} /> 
-      <br/>
-      <br/>
-      <br/>
-      <button onClick={handleValidate}>Validate benefits</button>
+      <Input  color='primary'variant="outlined" type="file" onChange={handleWorkdayFileUpload} /> 
+      <Button variant="outlined" color='primary' onClick={handleValidate}>Validate benefits</Button>
       </div>
       <div>
         <MaterialTable
