@@ -65,7 +65,7 @@ function App() {
     let m = 0; 
     const benfitHeaders = guardianData[0];
     
-    guardianData.forEach(employee => {  
+    guardianData.slice(1).forEach(employee => {  
       let employeeName = employee[0];    
       if(!employeeName) { 
         m++
@@ -194,10 +194,10 @@ function App() {
       <div>
         <MaterialTable
           columns={[
-            { title: "employee", field: "name" }
+            {  field: "name" }
           ]}
           data={Object.entries(employeesWithErrors || {}).map(([employeeName, data]) => ({ name: employeeName, ...data }))}
-          
+          title="Employees with invalid benefits: "
           detailPanel={rowData => {
             console.log('what!: ', rowData)
             return (
