@@ -37,8 +37,8 @@ function App() {
   const [employeesWithMissingBenefit, setEmployeesWithMissingBenefit] = useState();
   const [view, setView] = useState('missing-benefit');
 
-  const handleGuardianFileUpload = async ( files ) => await readXlsxFile(files[0]).then((rows) => setGuardianData(rows));
-  const handleWorkdayFileUpload = async ( files ) => await readXlsxFile(files[0]).then((rows) => setWorkdayData(rows));
+  const handleGuardianFileUpload = async ( files ) => await files && readXlsxFile(files[0]).then((rows) => setGuardianData(rows));
+  const handleWorkdayFileUpload = async ( files ) => await files && readXlsxFile(files[0]).then((rows) => setWorkdayData(rows));
    
   const handleValidate = () => { 
     const workDayEmployeeMap = {}; 
@@ -166,6 +166,7 @@ function App() {
     const missingBenefitMatch = {}; 
     Object.entries(employeesWithInvalidBenefits).forEach(([employeeName, data]) => {
       if(!Array.isArray(data.workdayBenifitsForEmployee) || !Array.isArray(data.guardianBenifitsForEmployee)) {
+
         missingEmployee[employeeName] = data
       } else {
         missingBenefitMatch[employeeName] = data
