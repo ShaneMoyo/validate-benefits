@@ -132,10 +132,10 @@ function App() {
           if(employeesWithInvalidBenefits[employeeName]) {
             employeesWithInvalidBenefits[employeeName].errors.push(err);
           } else {
-            console.log('adding a new one')
+            
             employeesWithInvalidBenefits[employeeName] = {
               workdayBenifitsForEmployee: plans,
-              guardianBenifitsForEmployee: guardianEmployeeMap[employeeName],
+              guardianBenifitsForEmployee: guardianEmployeeMap[employeeName]?.length > 0 ? guardianEmployeeMap[employeeName] : undefined,
               errors: [
                 err,
               ]
@@ -149,10 +149,10 @@ function App() {
           if(employeesWithInvalidBenefits[employeeName]) {
             employeesWithInvalidBenefits[employeeName].errors.push(err);
           } else {
-            console.log('adding a new one')
+            
             employeesWithInvalidBenefits[employeeName] = {
               workdayBenifitsForEmployee: plans,
-              guardianBenifitsForEmployee: guardianEmployeeMap[employeeName],
+              guardianBenifitsForEmployee: guardianEmployeeMap[employeeName]?.length > 0 ? guardianEmployeeMap[employeeName] : undefined,
               errors: [
                 err,
               ]
