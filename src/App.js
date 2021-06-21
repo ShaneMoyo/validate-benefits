@@ -96,8 +96,8 @@ function App() {
       
       for(let i = 5; i < employee.length; i++) {
         const guardianBenefit = employee[i] ? benfitHeaders[i] : null;
-        const workdayBenifitsForEmployee = workDayEmployeeMap[employeeName];
-        const guardianBenifitsForEmployee = guardianEmployeeMap[employeeName]; 
+        const workdayBenifitsForEmployee = workDayEmployeeMap[employeeName]?.length > 0 ? workDayEmployeeMap[employeeName] : undefined;
+        const guardianBenifitsForEmployee = guardianEmployeeMap[employeeName]?.length > 0 ? guardianEmployeeMap[employeeName] : undefined; 
         guardianToWorkdayMap[guardianBenefit] && guardianEmployeeMap[employeeName].push(guardianBenefit); 
         if(guardianToWorkdayMap[guardianBenefit] && !workdayBenifitsForEmployee?.includes(guardianToWorkdayMap[guardianBenefit])) {
           const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${guardianBenefit} in guardian but does not have ${guardianToWorkdayMap[guardianBenefit]} in workday.` : `Has ${guardianBenefit} in guardian but has no benefits in workday.`
