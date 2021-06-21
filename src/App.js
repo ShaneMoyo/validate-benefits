@@ -49,7 +49,7 @@ function App() {
     let w1 = []; 
     console.log('workdayData: ', workdayData); 
     workdayData.forEach(employee => { 
-      let workdayBenefit = employee[8];
+      let workdayBenefit = employee[2];
       const employeeName = `${employee[0]?.toUpperCase()}, ${employee[1]?.toUpperCase()}`;
       const isDental = workdayBenefit === 'USA Dental - USA Guardian PPO Low' || workdayBenefit === 'USA Dental - USA Guardian PPO High';
       
