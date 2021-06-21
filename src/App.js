@@ -161,11 +161,11 @@ function App() {
       })
     });
 
-    const noDataInWorkDay = {}; 
+    const missingEmployee = {}; 
     const missingBenefitMatch = {}; 
     Object.entries(employeesWithInvalidBenefits).forEach(([employeeName, data]) => {
       if(!Array.isArray(data.workdayBenifitsForEmployee) || !Array.isArray(data.guardianBenifitsForEmployee)) {
-        noDataInWorkDay[employeeName] = data
+        missingEmployee[employeeName] = data
       } else {
         missingBenefitMatch[employeeName] = data
       }
@@ -173,12 +173,12 @@ function App() {
 
     console.log('missing : ', m);
     console.log('bad count : ', Object.keys(employeesWithInvalidBenefits).length);
-    console.log('noDataInWorkDay count : ', Object.keys(noDataInWorkDay).length); 
-    console.log('noDataInWorkDay: ', noDataInWorkDay); 
+    console.log('missingEmployee count : ', Object.keys(missingEmployee).length); 
+    console.log('missingEmployee: ', missingEmployee); 
     console.log('missingBenefitMatch count : ', Object.keys(missingBenefitMatch).length); 
     console.log('missingBenefitMatch: ', missingBenefitMatch); 
     setEmployeesWithErrors(employeesWithInvalidBenefits); 
-    setEmployeesWithNoWorkday(noDataInWorkDay); 
+    setEmployeesWithNoWorkday(missingEmployee); 
     setEmployeesWithMissingBenefit(missingBenefitMatch)
   }
   const dataForView = view === 'missing-benefit' ? employeesWithMissingBenefit : employeesWithNoWorkday; 
@@ -198,14 +198,14 @@ function App() {
       <br/>
         <br/>
       <div>
-        {employeesWithErrors && <div><Button variant="outlined" color='primary' onClick={() => setView('no-workday')}>{`No Workday benefits: ${Object.keys(employeesWithNoWorkday).length}`}</Button><Button variant="outlined" color='primary' onClick={() => setView('missing-benefit')}>{`Invalid benefit status: ${Object.keys(employeesWithMissingBenefit).length}`}</Button></div> }
+        {employeesWithErrors && <div><Button variant="outlined" color='primary' onClick={() => setView('no-workday')}>{`Missing employee match: ${Object.keys(employeesWithNoWorkday).length}`}</Button><Button variant="outlined" color='primary' onClick={() => setView('missing-benefit')}>{`Benefits out of sync: ${Object.keys(employeesWithMissingBenefit).length}`}</Button></div> }
        
         <MaterialTable
           columns={[
             {  field: "name" }
           ]}
           data={Object.entries(dataForView || {}).map(([employeeName, data]) => ({ name: employeeName, ...data }))}
-          title="Employees with invalid benefits: "
+          title={view === 'missing-benefit' ? 'Employees with benefits out of sync' : 'Missing employee match in workday or guardian'}
           detailPanel={rowData => {
             console.log('what!: ', rowData)
             return (
