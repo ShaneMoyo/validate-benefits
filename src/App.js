@@ -3,6 +3,7 @@ import readXlsxFile from 'read-excel-file';
 import MaterialTable from "material-table";
 import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
+import {DropzoneArea} from 'material-ui-dropzone'
 
 const guardianToWorkdayMap = { 
   "AD&D: Basic Term Life Volume": "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)", 
@@ -36,8 +37,8 @@ function App() {
   const [employeesWithMissingBenefit, setEmployeesWithMissingBenefit] = useState();
   const [view, setView] = useState('missing-benefit');
 
-  const handleGuardianFileUpload = async ({ target: { files }}) => await readXlsxFile(files[0]).then((rows) => setGuardianData(rows));
-  const handleWorkdayFileUpload = async ({ target: { files }}) => await readXlsxFile(files[0]).then((rows) => setWorkdayData(rows));
+  const handleGuardianFileUpload = async ( files ) => await readXlsxFile(files[0]).then((rows) => setGuardianData(rows));
+  const handleWorkdayFileUpload = async ( files ) => await readXlsxFile(files[0]).then((rows) => setWorkdayData(rows));
    
   const handleValidate = () => { 
     const workDayEmployeeMap = {}; 
@@ -185,11 +186,23 @@ function App() {
   return (
     <div className="App">
       <div>
-      <label>Upload benefits file: </label>
-
-      <Input  color='primary' variant="outlined" type="file" onChange={handleGuardianFileUpload} /> 
-      <label>Upload workday file: </label>
-      <Input  color='primary'variant="outlined" type="file" onChange={handleWorkdayFileUpload} /> 
+        
+      
+      <div style={{ display: "flex"}}>
+        <div style={{ flex: 1, marginRight: "20px" }}>
+          <label>Upload benefits file: </label>
+          <DropzoneArea
+            onChange={handleGuardianFileUpload}
+          />
+        </div>
+        
+        <div style={{ flex: 1, }}>
+          <label>Upload workday file: </label>
+          <DropzoneArea
+            onChange={handleWorkdayFileUpload}
+            />
+        </div>
+      </div>
       <br/>
       <br/>
         <br/>
