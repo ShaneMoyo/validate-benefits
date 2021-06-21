@@ -191,14 +191,14 @@ function App() {
       
       <div style={{ display: "flex"}}>
         <div style={{ flex: 1, marginRight: "20px" }}>
-          <label>Upload benefits file: </label>
+          <label>Upload Guardian file: </label>
           <DropzoneArea
             onChange={handleGuardianFileUpload}
           />
         </div>
         
         <div style={{ flex: 1, }}>
-          <label>Upload workday file: </label>
+          <label>Upload Workday file: </label>
           <DropzoneArea
             onChange={handleWorkdayFileUpload}
             />
@@ -233,7 +233,7 @@ function App() {
             console.log('what!: ', rowData)
             return (
               <div>
-                <ul>
+                <ul style={{ listStyleType: "none"}}>
                   <li>
                     <div>
                       <p>Errors: </p>
