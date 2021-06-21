@@ -206,12 +206,21 @@ function App() {
       <br/>
       <br/>
         <br/>
-      <Button variant="outlined" color='primary' onClick={handleValidate}>Validate benefits</Button>
+      <Button style={{ margin: "auto", width: "70%", display: "flex" }} variant="outlined" color='primary' onClick={handleValidate}>Validate benefits</Button>
       </div>
       <br/>
-        <br/>
+      
       <div>
-        {employeesWithErrors && <div><Button variant="outlined" color='primary' onClick={() => setView('no-workday')}>{`Missing employee match: ${Object.keys(employeesWithNoWorkday).length}`}</Button><Button variant="outlined" color='primary' onClick={() => setView('missing-benefit')}>{`Benefits out of sync: ${Object.keys(employeesWithMissingBenefit).length}`}</Button></div> }
+        {employeesWithErrors && (
+          <div style={{ margin: "auto", width: "70%", display: "flex" }}>
+            <Button style={{ flex: 1, marginRight: "20px "}} variant="outlined" color='primary' onClick={() => setView('no-workday')}>
+              {`Missing employee match: ${Object.keys(employeesWithNoWorkday).length}`}
+            </Button>
+            <Button style={{ flex: 1, marginRight: "20px "}} variant="outlined" color='primary' onClick={() => setView('missing-benefit')}>
+              {`Benefits out of sync: ${Object.keys(employeesWithMissingBenefit).length}`}
+            </Button>
+          </div> 
+        )}
        
         <MaterialTable
           columns={[
