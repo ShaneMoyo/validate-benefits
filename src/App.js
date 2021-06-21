@@ -6,8 +6,8 @@ import Button from '@material-ui/core/Button';
 import {DropzoneArea} from 'material-ui-dropzone'
 
 const guardianToWorkdayMap = { 
-  "AD&D: Basic Term Life Volume": "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)", 
-  "Group Term Life: Basic Term Life Premium": "USA Group Term Life - USA Guardian  (Employee)", 
+  "Basic Term Life Premium": "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)", 
+  "Basic Term Life Premium": "USA Group Term Life - USA Guardian  (Employee)", 
   "Accident Premium": "USA Accident - USA Guardian", 
   "Dental Fee Premium": "USA Dental - USA Guardian PPO Dental",
   "LTD Premium": "USA Long Term Disability (LTD) - USA Guardian LTD (Employee)",
@@ -18,8 +18,8 @@ const guardianToWorkdayMap = {
 };
 
 const workdayToGuardianMap = { 
- "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)": "AD&D: Basic Term Life Volume", 
- "USA Group Term Life - USA Guardian  (Employee)": "Group Term Life: Basic Term Life Premium", 
+ "USA Accidental Death & Dismemberment (AD&D) - USA Guardian  (Employee)": "Basic Term Life Premium", 
+ "USA Group Term Life - USA Guardian  (Employee)": "Basic Term Life Premium", 
  "USA Accident - USA Guardian": "Accident Premium", 
  "USA Dental - USA Guardian PPO Dental": "Dental Fee Premium",
  "USA Long Term Disability (LTD) - USA Guardian LTD (Employee)" : "LTD Premium",
@@ -48,6 +48,7 @@ function App() {
     let y = 0;
     let w1 = []; 
     console.log('workdayData: ', workdayData); 
+    console.log('guardianData: ', guardianData);
     workdayData.forEach(employee => { 
       let workdayBenefit = employee[2];
       const employeeName = `${employee[0]?.toUpperCase()}, ${employee[1]?.toUpperCase()}`;
@@ -95,7 +96,7 @@ function App() {
       } 
       
       
-      for(let i = 5; i < employee.length; i++) {
+      for(let i = 1; i < employee.length; i++) {
         const guardianBenefit = employee[i] ? benfitHeaders[i] : null;
         const workdayBenifitsForEmployee = workDayEmployeeMap[employeeName]?.length > 0 ? workDayEmployeeMap[employeeName] : undefined;
         const guardianBenifitsForEmployee = guardianEmployeeMap[employeeName]?.length > 0 ? guardianEmployeeMap[employeeName] : undefined; 
