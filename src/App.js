@@ -103,7 +103,7 @@ function App() {
         if(guardianToWorkdayMap[guardianBenefit] && !workdayBenifitsForEmployee?.includes(guardianToWorkdayMap[guardianBenefit])) {
           const reason = (workdayBenifitsForEmployee && workdayBenifitsForEmployee[0]) ? `Has ${guardianBenefit} in guardian but does not have ${guardianToWorkdayMap[guardianBenefit]} in workday.` : `Has ${guardianBenefit} in guardian but has no benefits in workday.`
           if(employeesWithInvalidBenefits[employeeName]){
-            employeesWithInvalidBenefits[employeeName].guardianBenifitsForEmployee = guardianBenifitsForEmployee;
+            employeesWithInvalidBenefits[employeeName].guardianBenifitsForEmployee = !guardianToWorkdayMap[guardianBenefit] ? guardianBenifitsForEmployee : [guardianBenefit]
             employeesWithInvalidBenefits[employeeName].errors.push(
               reason, 
             )
