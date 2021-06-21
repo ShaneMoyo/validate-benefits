@@ -144,7 +144,7 @@ function App() {
         }
 
         if(!guardianEmployeeMap[employeeName].includes(workdayToGuardianMap[plan])) { 
-          err = `Has ${plan} on workday but does not have ${workdayToGuardianMap[plan]}`;
+          err = `Has ${plan} on workday but does not have ${workdayToGuardianMap[plan]} in guardian`;
           if(employeesWithInvalidBenefits[employeeName]) {
             employeesWithInvalidBenefits[employeeName].errors.push(err);
           } else {
